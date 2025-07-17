@@ -2,34 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Typing Speed Tester</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <div class="container">
-    <h1>⌨️ Typing Speed Tester</h1>
+    <h1>Typing Speed Tester</h1>
+    <div id="quoteDisplay" class="quote"></div>
+    <textarea id="quoteInput" placeholder="Start typing..." rows="5" cols="60"></textarea>
+    <p id="timer">Time: 60s</p>
+    <button onclick="renderNewQuote()">New Quote</button>
 
-    <div id="quoteDisplay" class="quote-box">
-      Click "Start Test" to begin typing.
-    </div>
-
-    <textarea
-      id="quoteInput"
-      placeholder="Start typing here..."
-      rows="5"
-      disabled
-    ></textarea>
-
-    <div class="stats">
-      <p><strong>Time:</strong> <span id="timer">0</span> s</p>
-      <p><strong>WPM:</strong> <span id="wpm">0</span></p>
-      <p><strong>Accuracy:</strong> <span id="accuracy">0</span>%</p>
-    </div>
-
-    <div class="buttons">
-      <button onclick="startTest()">Start Test</button>
-      <button onclick="resetTest()">Reset</button>
+    <div id="results">
+      <p id="wpm">WPM: 0</p>
+      <p id="accuracy">Accuracy: 0%</p>
+      <button id="reset">Reset</button>
     </div>
   </div>
 

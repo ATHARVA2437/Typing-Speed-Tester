@@ -1,48 +1,84 @@
 const quoteDisplay = document.getElementById("quoteDisplay");
 const quoteInput = document.getElementById("quoteInput");
-const timerEl = document.getElementById("timer");
-const wpmEl = document.getElementById("wpm");
-const accuracyEl = document.getElementById("accuracy");
+const timer = document.getElementById("timer");
+const wpmDisplay = document.getElementById("wpm");
+const accuracyDisplay = document.getElementById("accuracy");
+const resetBtn = document.getElementById("reset");
 
-let timer;
 let startTime;
-let currentQuote = "";
+let timerInterval;
+let timeLimit = 60;
 
-const quotes = [
-  "The quick brown fox jumps over the lazy dog.",
-  "Typing tests help improve your speed and accuracy.",
-  "Practice makes a person perfect.",
-  "Code is like humor. When you have to explain it, it’s bad.",
-  "Simplicity is the soul of efficiency."
-];
+function getRandomQuote() {
+  return fetch("https://api.quotable.io/random")
+    .then(response => response.json())
+    .then(data => data.content);
+}
 
-function startTest() {
-  quoteInput.disabled = false;
-  quoteInput.value = "";
-  quoteInput.focus();
-  currentQuote = quotes[Math.floor(Math.random() * quotes.length)];
-  quoteDisplay.textContent = currentQuote;
-
-  timerEl.textContent = 0;
-  wpmEl.textContent = 0;
-  accuracyEl.textContent = 0;
-
+function startTimer() {
   startTime = new Date();
-  clearInterval(timer);
-  timer = setInterval(updateTimer, 1000);
+  timer.textContent = `Time: ${timeLimit}s`;
+
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((new Date() - startTime) / 1000);
+    const timeLeft = timeLimit - elapsed;
+
+    timer.textContent = `Time: ${timeLeft}s`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      quoteInput.disabled = true;
+      calculateResults();
+    }
+  }, 1000);
 }
 
-function resetTest() {
-  clearInterval(timer);
-  timerEl.textContent = 0;
-  wpmEl.textContent = 0;
-  accuracyEl.textContent = 0;
-  quoteDisplay.textContent = 'Click "Start Test" to begin typing.';
-  quoteInput.value = "";
-  quoteInput.disabled = true;
+function calculateResults() {
+  const enteredText = quoteInput.value.trim();
+  const quoteText = quoteDisplay.innerText.trim();
+
+  const totalWords = enteredText.split(/\s+/).filter(word => word).length;
+  const elapsedTime = Math.floor((new Date() - startTime) / 1000) || 1;
+  const wpm = Math.round((totalWords / elapsedTime) * 60);
+  wpmDisplay.textContent = `WPM: ${wpm}`;
+
+  let correctChars = 0;
+  const minLen = Math.min(enteredText.length, quoteText.length);
+
+  for (let i = 0; i < minLen; i++) {
+    if (enteredText[i] === quoteText[i]) {
+      correctChars++;
+    }
+  }
+
+  const accuracy = Math.round((correctChars / quoteText.length) * 100);
+  accuracyDisplay.textContent = `Accuracy: ${accuracy}%`;
 }
 
-function updateTimer() {
-  const timeElapsed = Math.floor((new Date() - startTime) / 1000);
-  timerEl.textContent = timeElapsed;
+function renderNewQuote() {
+  getRandomQuote().then(quote => {
+    quoteDisplay.innerText = quote;
+    quoteInput.value = "";
+    quoteInput.disabled = false;
+    quoteInput.focus();
+    clearInterval(timerInterval);
+    startTimer();
+    wpmDisplay.textContent = "WPM: 0";
+    accuracyDisplay.textContent = "Accuracy: 0%";
+  });
 }
+
+quoteInput.addEventListener("input", () => {
+  const enteredText = quoteInput.value;
+  const quoteText = quoteDisplay.innerText;
+
+  if (enteredText === quoteText) {
+    clearInterval(timerInterval);
+    calculateResults();
+    quoteInput.disabled = true;
+  }
+});
+
+resetBtn.addEventListener("click", () => {
+  renderNewQuote();
+});
