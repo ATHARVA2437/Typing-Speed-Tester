@@ -1,26 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Typing Speed Tester</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>Typing Speed Tester</h1>
-    <div id="quoteDisplay" class="quote"></div>
-    <textarea id="quoteInput" placeholder="Start typing..." rows="5" cols="60"></textarea>
-    <p id="timer">Time: 60s</p>
-    <button onclick="renderNewQuote()">New Quote</button>
-
-    <div id="results">
+    <p id="quote-display">Loading quote...</p>
+    <textarea id="quote-input" placeholder="Start typing..."></textarea>
+    <div class="stats">
+      <p id="timer">Time: 60s</p>
       <p id="wpm">WPM: 0</p>
       <p id="accuracy">Accuracy: 0%</p>
-      <button id="reset">Reset</button>
     </div>
+    <button id="new-quote">New Quote</button>
+    <button id="reset">Reset</button>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>

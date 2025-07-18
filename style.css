@@ -1,53 +1,65 @@
 body {
   font-family: Arial, sans-serif;
-  text-align: center;
-  background-color: #f0f2f5;
+  background-color: #f7f7f7;
   margin: 0;
-  padding: 40px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .container {
-  background-color: white;
-  max-width: 800px;
-  margin: auto;
+  text-align: center;
+  background: #fff;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  width: 400px;
 }
 
-.quote {
-  font-size: 24px;
+h1 {
   margin-bottom: 20px;
 }
 
-textarea {
-  font-size: 18px;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
+#quote-display {
+  font-size: 1.2em;
+  margin: 20px 0;
+  min-height: 50px;
 }
 
-#timer {
-  font-size: 20px;
-  margin: 10px 0;
+textarea {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.stats p {
+  margin: 5px 0;
 }
 
 button {
   padding: 10px 20px;
-  font-size: 16px;
-  margin: 5px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
+  margin: 10px 5px;
   border: none;
   border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1em;
 }
 
-#results {
-  font-size: 18px;
-  margin-top: 20px;
+#new-quote {
+  background-color: #007bff;
 }
 
 #reset {
   background-color: #28a745;
+}
+
+button:hover {
+  opacity: 0.9;
 }

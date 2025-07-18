@@ -1,84 +1,84 @@
-const quoteDisplay = document.getElementById("quoteDisplay");
-const quoteInput = document.getElementById("quoteInput");
-const timer = document.getElementById("timer");
+const quoteDisplay = document.getElementById("quote-display");
+const quoteInput = document.getElementById("quote-input");
+const timerDisplay = document.getElementById("timer");
 const wpmDisplay = document.getElementById("wpm");
 const accuracyDisplay = document.getElementById("accuracy");
-const resetBtn = document.getElementById("reset");
+const newQuoteButton = document.getElementById("new-quote");
+const resetButton = document.getElementById("reset");
 
-let startTime;
-let timerInterval;
-let timeLimit = 60;
+let time = 60;
+let timer = null;
+let correctChars = 0;
+let totalChars = 0;
+let currentQuote = "";
+let timeElapsed = 0;
 
-function getRandomQuote() {
-  return fetch("https://api.quotable.io/random")
-    .then(response => response.json())
-    .then(data => data.content);
+// Offline list of quotes
+const offlineQuotes = [
+  "Stay hungry, stay foolish.",
+  "The best way to get started is to quit talking and begin doing.",
+  "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+  "Do what you can with all you have, wherever you are.",
+  "Act as if what you do makes a difference. It does.",
+  "Keep your face always toward the sunshine—and shadows will fall behind you.",
+  "Hardships often prepare ordinary people for an extraordinary destiny."
+];
+
+function getQuote() {
+  currentQuote = offlineQuotes[Math.floor(Math.random() * offlineQuotes.length)];
+  quoteDisplay.textContent = currentQuote;
+  quoteInput.value = "";
+  resetStats();
+}
+
+function resetStats() {
+  time = 60;
+  timeElapsed = 0;
+  correctChars = 0;
+  totalChars = 0;
+  timerDisplay.textContent = `Time: ${time}s`;
+  wpmDisplay.textContent = `WPM: 0`;
+  accuracyDisplay.textContent = `Accuracy: 0%`;
+  clearInterval(timer);
+  timer = null;
 }
 
 function startTimer() {
-  startTime = new Date();
-  timer.textContent = `Time: ${timeLimit}s`;
-
-  timerInterval = setInterval(() => {
-    const elapsed = Math.floor((new Date() - startTime) / 1000);
-    const timeLeft = timeLimit - elapsed;
-
-    timer.textContent = `Time: ${timeLeft}s`;
-
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      quoteInput.disabled = true;
-      calculateResults();
-    }
+  timer = setInterval(() => {
+    time--;
+    timeElapsed++;
+    timerDisplay.textContent = `Time: ${time}s`;
+    if (time <= 0) clearInterval(timer);
   }, 1000);
 }
 
-function calculateResults() {
-  const enteredText = quoteInput.value.trim();
-  const quoteText = quoteDisplay.innerText.trim();
-
-  const totalWords = enteredText.split(/\s+/).filter(word => word).length;
-  const elapsedTime = Math.floor((new Date() - startTime) / 1000) || 1;
-  const wpm = Math.round((totalWords / elapsedTime) * 60);
-  wpmDisplay.textContent = `WPM: ${wpm}`;
-
-  let correctChars = 0;
-  const minLen = Math.min(enteredText.length, quoteText.length);
-
-  for (let i = 0; i < minLen; i++) {
-    if (enteredText[i] === quoteText[i]) {
-      correctChars++;
-    }
+function updateStats() {
+  if (timeElapsed === 0) {
+    wpmDisplay.textContent = `WPM: 0`;
+    accuracyDisplay.textContent = `Accuracy: 0%`;
+    return;
   }
-
-  const accuracy = Math.round((correctChars / quoteText.length) * 100);
+  const wpm = Math.round((correctChars / 5) / (timeElapsed / 60));
+  const accuracy = Math.round((correctChars / totalChars) * 100) || 0;
+  wpmDisplay.textContent = `WPM: ${wpm}`;
   accuracyDisplay.textContent = `Accuracy: ${accuracy}%`;
 }
 
-function renderNewQuote() {
-  getRandomQuote().then(quote => {
-    quoteDisplay.innerText = quote;
-    quoteInput.value = "";
-    quoteInput.disabled = false;
-    quoteInput.focus();
-    clearInterval(timerInterval);
-    startTimer();
-    wpmDisplay.textContent = "WPM: 0";
-    accuracyDisplay.textContent = "Accuracy: 0%";
-  });
-}
-
 quoteInput.addEventListener("input", () => {
-  const enteredText = quoteInput.value;
-  const quoteText = quoteDisplay.innerText;
+  const typedText = quoteInput.value;
+  totalChars = typedText.length;
 
-  if (enteredText === quoteText) {
-    clearInterval(timerInterval);
-    calculateResults();
-    quoteInput.disabled = true;
+  correctChars = 0;
+  for (let i = 0; i < typedText.length; i++) {
+    if (typedText[i] === currentQuote[i]) correctChars++;
   }
+
+  if (!timer) startTimer();
+  updateStats();
 });
 
-resetBtn.addEventListener("click", () => {
-  renderNewQuote();
-});
+newQuoteButton.addEventListener("click", getQuote);
+resetButton.addEventListener("click", getQuote);
+
+// Load the first quote
+getQuote();
